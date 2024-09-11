@@ -1,6 +1,8 @@
-# Assignment 2 Breakdown of the Process (UNFINISHED)
+# Assignment 2 Breakdown of the Process
 
-# Explain how you implemented the checklist above step-by-step (not just following the tutorial).
+## Explain how you implemented the checklist above step-by-step.
+
+### Create a new Django project.
 
 First and Foremost, breaking down the problem step by step to have a clear vision on what to do. After analyzing, I realized that they were asking for a combination of tutorial 0 and 1.
 
@@ -16,9 +18,13 @@ django-admin startproject TocoLoca .
 
 Next, it was time to set up the actual django project which I set as TocoLoca, which is a play on "toko lokal".
 
+### Create an application with the name main in the project.
+
 ```
 python manage.py startapp main
-
+```
+### Perform routing in the project so that the application main can run.
+```
 ...
 INSTALLED_APPS = [
     ...,
@@ -27,8 +33,15 @@ INSTALLED_APPS = [
 ...
 ```
 
-I then created an application as part of my django project called main and added main as an installed app in my settings.py thats in my original TocoLoca Project. After that, I created a simple HTML Page with CSS styling and put that in my templates inside main. Furthermore, I started programmed a model to fit this program. 
+I then created an application as part of my django project called main and added main as an installed app in my settings.py thats in my original TocoLoca Project.   Now, it's time to handle migrations. This involves creating a folder for migrations and applying migrations to the local database. 
 
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+
+
+### Create a model in the application main with the name Product and have the mandatory
 ```
 from django.db import models
 
@@ -39,28 +52,26 @@ class Product(models.Model):
 
 ```
 
-Now, it's time to handle migrations. This involves creating a folder for migrations and applying migrations to the local database. 
+Moving on, I started programmed a model to fit this program. 
 
-```
-python manage.py makemigrations
-python manage.py migrate
-```
-
-Moving on,
+### Create a function in views.py to return to an HTML template that displays the name of the application and your name and class.
 
 ```
 from django.shortcuts import render
 
 def show_main(request):
     context = {
-        'Name' : 'Mushroom Lamp',
-        'Price': '$19.90',
-        'Desc': 'Cute Lamp'
+        'Name' : 'TocaLoca',
+        'Price': 'Keidi',
+        'Desc': 'KKI'
     }
 
     return render(request, "main.html", context)
 ```
 
+My function called show_main returns a HTML template based on the request.
+
+### Create a routing in urls.py for the application main to map the function created in views.py.
 
 ```
 from django.urls import path
@@ -72,15 +83,15 @@ urlpatterns = [
     path('', show_main, name='show_main'),
 ]
 ```
+The above is in urls.py which is part of main.
 
-I put this block of code inside my views.py inside main.
 
-# Create a diagram that contains the request client to a Django-based web application and the response it gives, and explain the relationship between urls.py, views.py, models.py, and the html file.
+## Create a diagram that contains the request client to a Django-based web application and the response it gives, and explain the relationship between urls.py, views.py, models.py, and the html file.
 
 ![image](https://github.com/user-attachments/assets/bcf23b23-161a-413f-b5f9-5d586b95a893)
 
 
-# Explain the use of git in software development!
+## Explain the use of git in software development!
 
 Git is a distributed version control system used in software development to track changes in code, facilitate collaboration, and maintain a history of revisions. It enables developers to create branches to work on new features or bug fixes without affecting the main codebase. These branches can be merged back into the main project after review, ensuring that changes are integrated smoothly. Git also provides tools for resolving conflicts when multiple developers make changes to the same code. Its use ensures code consistency, enables teamwork, and helps manage complex projects efficiently by tracking every change.
 
