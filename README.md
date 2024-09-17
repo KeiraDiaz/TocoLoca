@@ -1,4 +1,81 @@
-# Assignment 2 Breakdown of the Process
+# TocoLoca 🛍️🌴
+### Your favorite local shop for simple goodies!!
+
+<details>
+
+<summary>Assignment 3</summary>
+
+## Explain why we need data delivery in implementing a platform.
+
+EEffective data delivery is key to running a platform because it ensures that information reaches the right people or systems quickly and correctly. This helps the platform function smoothly, supports real-time decisions, keeps data secure, and makes sure everyone is using the latest information. Without good data delivery, platforms would struggle with performance, fail to meet user needs, and have trouble protecting sensitive information.
+
+## In your opinion, which is better, XML or JSON? Why is JSON more popular than XML?
+
+Personally, I prefer JSON because it's structure and distinct appearance, making it much more human readable. According to [Amazon Web Services](https://aws.amazon.com/compare/the-difference-between-json-xml/#:~:text=JSON%20is%20simple%20and%20more,is%20complex%20and%20less%20flexible.&text=JSON%20supports%20numbers%2C%20objects%2C%20strings,dates%2C%20images%2C%20and%20namespaces.), JSON is faster to parse and better suited for APIs, mobile apps, and data interchange, while XML is ideal for complex data structures with multiple variables. JSON supports fewer data types but is generally more efficient and secure. 
+
+## Explain the functional usage of is_valid() method in Django forms. Also explain why we need the method in forms.'
+
+The is_valid() method in Django forms checks whether the data entered meets the form’s validation rules, such as data type and length. If all fields contain valid data, it returns True and stores the cleaned data in the form’s cleaned_data attribute. This method is crucial for ensuring that user input is correct and ready to be processed or saved to the database. It simplifies error handling by verifying data before any further actions, helping to maintain data integrity and prevent invalid entries.
+
+## Why do we need csrf_token when creating a form in Django? What could happen if we did not use csrf_token on a Django form? How could this be leveraged by an attacker?
+
+
+The csrf_token is a crucial security feature in Django that protects web applications from Cross-Site Request Forgery (CSRF) attacks. These attacks occur when an attacker tricks an authenticated user into unknowingly submitting malicious requests, potentially leading to unauthorized actions like changing account details or transferring funds. The csrf_token ensures that every form submission or request comes from a legitimate source (the same domain) by embedding a unique token in each form. When the form is submitted, the server checks the token, and if it's missing or invalid, the request is rejected, preventing unauthorized actions and securing the user’s session.
+
+## Explain how you implemented the checklist above step-by-step (not just following the tutorial).
+
+<details>
+<summary>POSTMAN Proof</summary>
+![image](https://github.com/user-attachments/assets/e8ab748e-8410-4748-8e51-448778a10148)
+![image](https://github.com/user-attachments/assets/b13d5cc0-19d7-4acf-bc77-abd4b30f52d5)
+![image](https://github.com/user-attachments/assets/e09fe769-e139-4e48-aba4-02541c9d4a78)
+![image](https://github.com/user-attachments/assets/a0a2acc8-eeea-4f9e-91f3-2c47a1efb522)
+</details>
+
+## Explain how you implemented the checklist above step-by-step
+
+1. First thing I did was create a html template, all my pages will be following this template, and modified this line so that it would be accessible by the other html files.
+
+```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    {% block meta %} {% endblock meta %}
+  </head>
+
+  <body>
+    {% block content %} {% endblock content %}
+  </body>
+```
+
+```
+TEMPLATES = [
+    {
+        ...
+        'DIRS': [BASE_DIR / 'templates'],
+        ...
+```
+
+2. After that, I changed a couple lines in the model.py so that any item entries will now have an id
+
+```
+import uuid
+...
+class ItemEntry(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    ...
+```
+3. 
+
+</details>
+
+<details>
+
+
+<summary>Assignment 2</summary>
 
 ## Explain how you implemented the checklist above step-by-step.
 
@@ -102,3 +179,5 @@ Django is often used as a starting point for learning software development becau
 # Why is the Django model called an ORM?
 
 The Django model is called an ORM (Object-Relational Mapping) because it acts as a bridge between the relational database and the object-oriented programming model. In Django, models represent database tables, and each instance of a model corresponds to a row in the table. The ORM allows developers to interact with the database using Python code instead of writing raw SQL queries. It automatically converts Python objects (models) into database records and vice versa, simplifying database operations and making it easier to work with complex data relationships within a Python application.
+
+</details>
