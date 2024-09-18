@@ -24,13 +24,6 @@ The csrf_token is a crucial security feature in Django that protects web applica
 
 ## Explain how you implemented the checklist above step-by-step (not just following the tutorial).
 
-<details>
-<summary>POSTMAN Proof</summary>
-![image](https://github.com/user-attachments/assets/e8ab748e-8410-4748-8e51-448778a10148)
-![image](https://github.com/user-attachments/assets/b13d5cc0-19d7-4acf-bc77-abd4b30f52d5)
-![image](https://github.com/user-attachments/assets/e09fe769-e139-4e48-aba4-02541c9d4a78)
-![image](https://github.com/user-attachments/assets/a0a2acc8-eeea-4f9e-91f3-2c47a1efb522)
-</details>
 
 ## Explain how you implemented the checklist above step-by-step
 
@@ -160,6 +153,19 @@ from django.http import HttpResponse
 from django.core import serializers
 ```
 Serializer are what converts python data types to your desired data type and vice versa, in this case, XML and JSON. The functions earlier would combine all the the data in the database and represnt it as its respective form. The difference between with id and without id is that the function has an added filter. 
+
+<details>
+<summary>POSTMAN Proof</summary>
+  
+![image](https://github.com/user-attachments/assets/e8ab748e-8410-4748-8e51-448778a10148)
+
+![image](https://github.com/user-attachments/assets/b13d5cc0-19d7-4acf-bc77-abd4b30f52d5)
+
+![image](https://github.com/user-attachments/assets/e09fe769-e139-4e48-aba4-02541c9d4a78)
+
+![image](https://github.com/user-attachments/assets/a0a2acc8-eeea-4f9e-91f3-2c47a1efb522)
+
+</details>
 
 </details>
 
