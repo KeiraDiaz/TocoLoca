@@ -59,7 +59,7 @@ TEMPLATES = [
         ...
 ```
 
-2. After that, I changed a couple lines in the model.py so that any item entries will now have an id
+2. After that, I changed a couple lines in the `model.py` so that any item entries will now have an id
 
 ```
 import uuid
@@ -68,7 +68,98 @@ class ItemEntry(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     ...
 ```
-3. 
+
+3. Moving on, we create a Form Input Data, where we will be adding the way our data will be stored in the database
+
+```
+from django.forms import ModelForm
+from main.models import ItemEntry
+
+class ItemEntryForm(ModelForm):
+    class Meta:
+        model = ItemEntry
+        fields = ["name", "price", "desc"]
+```
+
+4. On `views.py`, we change this line of code so that we can allow redirects, in the same file, we create this new function so that we can request with method POST to our DB.
+
+```
+from django.shortcuts import render, redirect
+```
+
+```
+def create_new_item(request):
+    form = ItemEntryForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return redirect('main:show_main')
+
+    context = {'form': form}
+    return render(request, "create_new_item.html", context)
+```
+
+5. I've also adjusted my `show_main` function like this
+
+```
+def show_main(request):
+    item_entries = ItemEntry.objects.all()
+
+    context = {
+        'Name' : 'TocaLoca',
+        'Price': 'Keira Diaz',
+        'Desc': 'KKI',
+        'item_entries' : item_entries
+    }
+
+    return render(request, "main.html", context)
+```
+
+Additionally, I've also created this functions, I'll explain below.
+
+```
+def show_xml(request):
+    data = ItemEntry.objects.all()
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+def show_json(request):
+    data = ItemEntry.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+def show_xml_by_id(request, id):
+    data = ItemEntry.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+def show_json_by_id(request, id):
+    data = ItemEntry.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+```
+
+6. To perform routing, I changed  `urls.py`, so that we imported all the functions and include their path in url_patterns.
+
+```
+from main.views import show_main, create_new_item, show_xml, show_json, show_xml_by_id, show_json_by_id
+
+app_name = 'main'
+
+urlpatterns = [
+    path('', show_main, name='show_main'),
+    path('create_new_item', create_new_item, name='create_new_item'),
+    path('xml/', show_xml, name='show_xml'),
+    path('json/', show_json, name='show_json'),
+    path('xml/<str:id>/', show_xml_by_id, name='show_xml_by_id'),
+    path('json/<str:id>/', show_json_by_id, name='show_json_by_id'),
+]
+```
+
+7. I then modified the html file for main and create new item
+8. Back to representing data is JSON and XML, I needed to add some imports earlier, namely these two
+
+```
+from django.http import HttpResponse
+from django.core import serializers
+```
+Serializer are what converts python data types to your desired data type and vice versa, in this case, XML and JSON. The functions earlier would combine all the the data in the database and represnt it as its respective form. The difference between with id and without id is that the function has an added filter. 
 
 </details>
 
