@@ -36,5 +36,10 @@
       <button class="add-item-btn">Add New Item</button>
     </a>
 
+    <a href="{% url 'main:logout' %}">
+      <button>Logout</button>
+    </a>
+
+    <h5>Last login session: {{ last_login }}</h5>
 </div>
 {% endblock content %}
