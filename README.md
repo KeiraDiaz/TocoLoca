@@ -3,6 +3,166 @@
 
 <details>
 
+<summary> Assignment 4
+</summary>
+
+## 1. Differences between HttpResponseRedirect() and redirect() 
+* HttpResponseRedirect():
+A built-in Django class that returns an HTTP 302 response to redirect to a specific URL.Typically used when we want more control and modification on the response before returning it (e.g., adding cookies or values into the website’s local storage).
+* redirect():
+A Django shortcut function that implicitly uses HttpResponseRedirect().
+redirect() is more convenient because it can accept various parameters (URL, named URL patterns, model instances, etc.) and is more concise in syntax.
+
+## 2. How the Product Model is Linked to the User Model
+In this project, the ItemEntry model is usually linked to the User model using ForeignKey. This connects each item to a specific user.
+```
+class ItemEntry(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    price = models.IntegerField()
+    desc = models.TextField()
+
+```
+Each time a user creates a item entry, that entry is associated with exactly one logged-in User. ForeignKey is used to create a many-to-one relationship between ItemEntry and User. In other words, one user can have many products, but each product belongs to only one user.
+
+## 3. Differences Between Authentication and Authorization and what happens when a user logs in.
+
+Authentication is the process of verifying a user's identity, typically through credentials like a username and password. It ensures that only users with valid accounts can access the website. For example, when a user logs in with their credentials, their identity is authenticated. On the other hand, authorization determines what an authenticated user is allowed to access. It assigns specific permissions based on the user's role. For instance, after logging in, an admin can access the /admin panel, while a regular user cannot.
+
+In Django, authentication verifies the user's credentials, and once successful, authorization checks their permissions to grant or restrict access to various resources. Django manages both processes using middleware. The authenticated user is stored as request.user in every request, making it easy to retrieve user information. Additionally, Django offers permissions and groups to control access at a granular level, allowing different levels of access for different users. Built-in decorators like @login_required and permission checks can be applied to views to ensure secure access.
+
+## 4. How Django remembers logged-in users
+
+Django remembers logged-in users using sessions and cookies.
+
+After a user successfully logs in, Django creates a session for the user and stores the session ID in a cookie on the user’s browser.
+The cookie contains user data, which is typically encrypted.
+This cookie is then sent to the server with every subsequent request, so for each protected request, the user must include the cookie.
+The cookie will be decrypted into the original user data, and the server will determine if the user data in the cookie is valid.
+Other Uses of Cookies:
+
+Cookies can be used to track user preferences, save shopping carts, or store other temporary data between requests. ## paragraph form please
+
+Not all cookies are secure, and improperly protected cookies can be vulnerable to attacks such as Cross-Site Scripting (XSS) and Cross-Site Request Forgery (CSRF). To enhance security, Django provides several mechanisms for safeguarding cookies, including but not limited to:
+* HttpOnly: Prevents cookies from being accessed via client-side JavaScript, protecting against XSS attacks.
+* Secure: Ensures cookies are only sent over HTTPS, preventing them from being transmitted over insecure connections.
+
+
+Here is the translation of your text to English:
+
+1. Differences between HttpResponseRedirect() and redirect()
+HttpResponseRedirect():
+
+A built-in Django class that returns an HTTP 302 response to redirect to a specific URL.
+Typically used when we want more control and modification on the response before returning it (e.g., adding cookies or values into the website’s local storage).
+Example:
+python
+Copy code
+.......
+def login_user(request):
+    if request.user.is_authenticated:
+        return redirect('main:show_main')
+    
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            response = HttpResponseRedirect(reverse('main:show_main'))
+            response.set_cookie('last_login', datetime.datetime.now())
+            return response
+
+    else:
+        form = AuthenticationForm(request)
+
+    context = {'form': form}
+    return render(request, 'auth/login.html', context)
+.......
+redirect():
+
+A Django shortcut function that implicitly uses HttpResponseRedirect().
+redirect() is more convenient because it can accept various parameters (URL, named URL patterns, model instances, etc.) and is more concise in syntax.
+Example:
+python
+Copy code
+.......
+# Authentication Views
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "User has been created")
+            return redirect('main:login')
+
+    context = {'form': form}
+    return render(request, 'auth/register.html', context)
+.......
+Main Difference: redirect() is a simpler way to perform redirects and is flexible with parameters, while HttpResponseRedirect() provides more control for modifications before sending the response.
+
+2. How the Product Model is Linked to the User Model
+In this project, the Product model is usually linked to the User model using ForeignKey. This connects each Product to a specific user.
+
+Example of a Product model:
+
+python
+Copy code
+.......
+class Product(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+    name = models.CharField(max_length=100)
+    price = models.IntegerField()
+    description = models.TextField(max_length=500)
+How it works:
+Each time a user creates a product entry, that entry is associated with exactly one logged-in User.
+ForeignKey is used to create a many-to-one relationship between Product and User. In other words, one user can have many products, but each product belongs to only one user.
+3. Differences Between Authentication and Authorization
+Authentication: The process of verifying a user’s identity (e.g., through username and password). This is the first step to ensure that only users with verified accounts can access our website.
+
+Example: When users log in with their username and password.
+Authorization: The process of granting access to authenticated users to specific resources based on their permissions.
+
+Example: After logging in, a user can either be an Admin or a regular User. Regular Users are restricted from accessing the /admin endpoint.
+User Login Process:
+
+When a user logs in, authentication is performed to ensure their identity is correct.
+After success, Django performs authorization by checking the user’s permissions to determine if they are allowed to access certain resources.
+Implementation in Django:
+
+Django uses middleware to manage authentication and authorization.
+Django stores the authenticated user in the request object as request.user.
+For authorization, Django uses permissions and groups, which can be set on specific models or views.
+4. How Django Remembers Logged-In Users
+Django remembers logged-in users using sessions and cookies.
+
+After a user successfully logs in, Django creates a session for the user and stores the session ID in a cookie on the user’s browser.
+The cookie contains user data, which is typically encrypted.
+This cookie is then sent to the server with every subsequent request, so for each protected request, the user must include the cookie.
+The cookie will be decrypted into the original user data, and the server will determine if the user data in the cookie is valid.
+Other Uses of Cookies:
+
+Cookies can be used to track user preferences, save shopping carts, or store other temporary data between requests.
+Cookie Security:
+
+Not all cookies are secure. For example, unprotected cookies can be vulnerable to Cross-Site Scripting (XSS) attacks.
+To make cookies more secure, Django offers several options like:
+HttpOnly: Prevents cookies from being accessed via JavaScript.
+Secure: Sends cookies only over HTTPS.
+
+# Checklist Implementation Steps
+### 1. Implementing User Registration, Login, and Logout Functions
+a) Create a form in a view for new user registration using UserCreationForm
+b) Create the auth/register.html template to display the registration form.
+
+</details>
+
+<details>
+
 <summary>Assignment 3</summary>
 
 ## Explain why we need data delivery in implementing a platform.
