@@ -1,0 +1,68 @@
+<nav class="bg-rose-800 shadow-lg fixed top-0 left-0 z-40 w-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+          <!-- Logo or Brand Name -->
+          <div class="flex items-center">
+              <h1 class="text-2xl font-bold text-white">Toco Loca</h1>
+          </div>
+          <!-- Desktop Menu (Visible on large screens) -->
+          <div class="hidden md:flex items-center space-x-6">
+              <a href="#" class="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-rose-950">Home</a>
+              <a href="#" class="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-rose-950">Products</a>
+              <a href="#" class="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-rose-950">Categories</a>
+              <a href="#" class="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-rose-950">Cart</a>
+              {% if user.is_authenticated %}
+                  <span class="text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Welcome, {{ user.username }}!</span>
+                  <a href="{% url 'main:logout' %}" class="text-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                      Logout
+                  </a>
+              {% else %}
+                  <a href="{% url 'main:login' %}" class="text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                      Login
+                  </a>
+                  <a href="{% url 'main:register' %}" class="text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                      Register
+                  </a>
+              {% endif %}
+          </div>
+          <!-- Mobile Hamburger Button (Visible on small screens) -->
+          <div class="md:hidden flex items-center">
+              <button class="mobile-menu-button focus:outline-none">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 6h16M4 12h16M4 18h16"></path> <!-- Three stripes icon -->
+                  </svg>
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <!-- Mobile Menu (Hidden by default) -->
+  <div class="mobile-menu hidden md:hidden px-4 w-full bg-rose-900">
+      <a href="#" class="block text-white text-center px-3 py-2 rounded-md text-sm font-medium hover:bg-rose-900">Home</a>
+      <a href="#" class="block text-white text-center px-3 py-2 rounded-md text-sm font-medium hover:bg-rose-900">Products</a>
+      <a href="#" class="block text-white text-center px-3 py-2 rounded-md text-sm font-medium hover:bg-rose-900">Categories</a>
+      <a href="#" class="block text-white text-center px-3 py-2 rounded-md text-sm font-medium hover:bg-rose-900">Cart</a>
+      {% if user.is_authenticated %}
+          <span class="block text-gray-300 text-center px-3 py-2 rounded-md text-sm font-medium">Welcome, {{ user.username }}!</span>
+          <a href="{% url 'main:logout' %}" class="block text-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition duration-300 mb-4">
+              Logout
+          </a>
+      {% else %}
+          <a href="{% url 'main:login' %}" class="block text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-300 mb-2">
+              Login
+          </a>
+          <a href="{% url 'main:register' %}" class="block text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+              Register
+          </a>
+      {% endif %}
+  </div>
+
+  <script>
+      const btn = document.querySelector("button.mobile-menu-button");
+      const menu = document.querySelector(".mobile-menu");
+
+      btn.addEventListener("click", () => {
+          menu.classList.toggle("hidden");
+      });
+  </script>
+</nav>

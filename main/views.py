@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from main.forms import ItemEntryForm
 from main.models import ItemEntry
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
@@ -19,10 +19,10 @@ def show_main(request):
 
     context = {
         'Name' : request.user.username,
-        'Price': 'Keira Diaz',
-        'Desc': 'KKI',
+        'NPM' : "2306256394",
+        'Class': 'KKI',
         'item_entries' : item_entries,
-        'last_login': request.COOKIES['last_login'],
+        'last_login': request.COOKIES.get('last_login',"Not set"),
     }
 
     return render(request, "main.html", context)
@@ -88,3 +88,25 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+def edit_item(request, id):
+    # Get mood entry based on id
+    item = ItemEntry.objects.get(pk = id)
+
+    # Set mood entry as an instance of the form
+    form = ItemEntryForm(request.POST or None, instance=item)
+
+    if form.is_valid() and request.method == "POST":
+        # Save form and return to home page
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "edit_item.html", context)
+
+def delete_item(request, id):
+    # Get mood based on id
+    item = ItemEntry.objects.get(pk = id)
+    item.delete()
+    # Return to home page
+    return HttpResponseRedirect(reverse('main:show_main'))
