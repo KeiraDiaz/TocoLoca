@@ -171,11 +171,12 @@ else:
       <div class="flex items-center justify-between h-16">
     ...
    ```
-</details
+      </details>
 
 <details>
-
-<summary> Assignment 4
+  
+<summary>
+  Assignment 4
 </summary>
 
 ## 1. Differences between HttpResponseRedirect() and redirect() 
