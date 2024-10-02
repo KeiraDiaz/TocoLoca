@@ -3,6 +3,178 @@
 
 <details>
 
+<summary> Assignment 5
+</summary>
+
+## 1. Priority Order of CSS Selectors
+
+Inline Style: Inline styles have the highest specificity since they are applied directly to the HTML element.
+ID Selector: ID selectors are more specific than classes and element selectors.
+Class, Pseudo Class, and Attribute Selectors: These have lower specificity than IDs but higher than element selectors.
+Element Selector and Pseudo-Elements: These hold the lowest level of specificity.
+
+## 2. Why Is Responsive Design Important in Web Application Development? 
+Responsive design reduces data load and simplifies code by eliminating the need to create device-specific versions of a site. Its main goal is to ensure that web applications provide the best possible viewing and interaction experience across all devices.
+
+Applications with Responsive Design:
+GitHub: Provides a uniform experience on all devices.
+Dropbox: Adapts its layout based on the device, offering a seamless experience across platforms. The mobile app simplifies tasks, while the desktop version enhances Windows Explorer, macOS Finder, and taskbar functionalities.
+
+Applications without Responsive Design:
+Older Government Websites: Some older local government portals lack responsive design, resulting in small text, misaligned elements, and non-functional features on mobile devices.
+Legacy Corporate Portals: Some older intranet or corporate systems were designed exclusively for desktops, and without responsive updates, mobile users face issues like excessive zooming and scrolling.
+
+## 3. Differences Between Margin, Border, and Padding
+
+Margin: The space outside the element's border, used to clear an area around the element.
+Border: A visible line around the padding and content of an element.
+Padding: The space between the element’s content and its border.
+How to Implement Them:
+```
+Margin:
+css
+Copy code
+.element {
+  margin: 20px;
+}
+.element {
+  margin-top: 5px;
+  margin-right: 10px;
+  margin-bottom: 20px;
+  margin-left: 30px;
+}
+Border:
+css
+Copy code
+.element {
+  border: 5px solid;
+}
+.element {
+  border-top: 5px red;
+  border-right: 5px green;
+  border-bottom: 5px blue;
+  border-left: 5px red;
+}
+Padding:
+css
+Copy code
+.element {
+  padding: 40px;
+}
+.element {
+  padding-top: 15px;
+  padding-right: 20px;
+  padding-bottom: 25px;
+  padding-left: 35px;
+}
+```
+## 4. Concepts of Flexbox and Grid Layout
+
+Flexbox: Flexbox allows for precise control over the alignment and distribution of space between items, working in one dimension (either row or column).
+Uses:
+Navigation Bars: Flexbox is often used to evenly space or center navigation items.
+Responsive Layouts: Flexbox is effective for rearranging elements as screen sizes change, enhancing responsive design.
+Grid: The grid system supports two-dimensional layouts, handling both rows and columns simultaneously, allowing for more complex designs.
+Uses:
+Dashboards: Ideal for organizing charts, tables, and widgets in a structured format.
+Complex Page Layouts: Useful for building full web pages that require both rows and columns for content organization.
+How I Implemented the Checklist
+
+## 5. This section explains the step-by-step approach for implementing the features discussed in the assignment.
+### Implement functions to delete and edit products.
+1. Create two new functions in views.py to delete and edit products:
+```
+def edit_item(request, id):
+    item = ItemEntry.objects.get(pk = id)
+    form = ItemEntryForm(request.POST or None, instance=item)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "edit_item.html", context)
+
+def delete_item(request, id):
+    item = ItemEntry.objects.get(pk = id)
+    item.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
+```
+2. Add necessary dependent imports
+```
+from django.shortcuts import .., reverse
+from django.http import .., HttpResponseRedirect
+```
+3. Add those two functions and their urls to views.py
+```
+from main.views import show_main, create_new_item, show_xml, show_json, show_xml_by_id, show_json_by_id, register, login_user, logout_user, edit_item, delete_item
+urlpatterns = [
+    ...
+    path('edit-item/<uuid:id>', edit_item, name='edit_item'),
+    path('delete/<uuid:id>', delete_item, name='delete_item'),
+]
+```
+### Customize the design of the HTML templates that have been created in previous assignments using CSS or a CSS framework (such as Bootstrap, Tailwind, Bulma) with the following conditions:
+1. Create a folder called `static`in the root directory with two other folders called `images` and `css`. This will be where we put our necessary images and designs.
+2. Modified `base.html` to reference TailWindCSS and using whitenoise.
+```
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block meta %} {% endblock meta %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
+  </head>
+  <body>
+    {% block content %} {% endblock content %}
+  </body>
+</html>
+
+# THIS IS IN SETTINGS.PY
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    ....
+
+# THIS IS TO DEAL WITH STATIC
+STATIC_URL = '/static/'
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static' # refers to /static root project in development mode
+    ]
+else:
+    STATIC_ROOT = BASE_DIR / 'static' 
+```
+3. Add any needed images to images. Create a css file called `global.css`. Here is a short snippet.
+```
+.form-style form input, form textarea, form select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid #bcbcbc;
+    border-radius: 0.375rem;
+}
+.form-style form input:focus, form textarea:focus, form select:focus {
+    outline: none;
+...
+```
+4. Using inline CSS, customized all html pages made from previous assignment.
+
+
+### Create a navigation bar (navbar) for the features in the application that is responsive to different device sizes, especially mobile and desktop.
+1. Created `navbar.html` in `templates` in root driectory. Here is a short snippet:
+   ```
+<nav class="bg-rose-800 shadow-lg fixed top-0 left-0 z-40 w-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+    ...
+   ```
+</details
+
+<details>
+
 <summary> Assignment 4
 </summary>
 
@@ -13,88 +185,6 @@ A built-in Django class that returns an HTTP 302 response to redirect to a speci
 A Django shortcut function that implicitly uses HttpResponseRedirect().
 redirect() is more convenient because it can accept various parameters (URL, named URL patterns, model instances, etc.) and is more concise in syntax.
 
-## 2. How the Product Model is Linked to the User Model
-In this project, the ItemEntry model is usually linked to the User model using ForeignKey. This connects each item to a specific user.
-```
-class ItemEntry(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
-    price = models.IntegerField()
-    desc = models.TextField()
-
-```
-Each time a user creates a item entry, that entry is associated with exactly one logged-in User. ForeignKey is used to create a many-to-one relationship between ItemEntry and User. In other words, one user can have many products, but each product belongs to only one user.
-
-## 3. Differences Between Authentication and Authorization and what happens when a user logs in.
-
-Authentication is the process of verifying a user's identity, typically through credentials like a username and password. It ensures that only users with valid accounts can access the website. For example, when a user logs in with their credentials, their identity is authenticated. On the other hand, authorization determines what an authenticated user is allowed to access. It assigns specific permissions based on the user's role. For instance, after logging in, an admin can access the /admin panel, while a regular user cannot.
-
-In Django, authentication verifies the user's credentials, and once successful, authorization checks their permissions to grant or restrict access to various resources. Django manages both processes using middleware. The authenticated user is stored as request.user in every request, making it easy to retrieve user information. Additionally, Django offers permissions and groups to control access at a granular level, allowing different levels of access for different users. Built-in decorators like @login_required and permission checks can be applied to views to ensure secure access.
-
-## 4. How Django remembers logged-in users
-
-Django remembers logged-in users using sessions and cookies.
-
-After a user successfully logs in, Django creates a session for the user and stores the session ID in a cookie on the user’s browser.
-The cookie contains user data, which is typically encrypted.
-This cookie is then sent to the server with every subsequent request, so for each protected request, the user must include the cookie.
-The cookie will be decrypted into the original user data, and the server will determine if the user data in the cookie is valid.
-Other Uses of Cookies:
-
-Cookies can be used to track user preferences, save shopping carts, or store other temporary data between requests. ## paragraph form please
-
-Not all cookies are secure, and improperly protected cookies can be vulnerable to attacks such as Cross-Site Scripting (XSS) and Cross-Site Request Forgery (CSRF). To enhance security, Django provides several mechanisms for safeguarding cookies, including but not limited to:
-* HttpOnly: Prevents cookies from being accessed via client-side JavaScript, protecting against XSS attacks.
-* Secure: Ensures cookies are only sent over HTTPS, preventing them from being transmitted over insecure connections.
-
-
-Here is the translation of your text to English:
-
-1. Differences between HttpResponseRedirect() and redirect()
-HttpResponseRedirect():
-
-A built-in Django class that returns an HTTP 302 response to redirect to a specific URL.
-Typically used when we want more control and modification on the response before returning it (e.g., adding cookies or values into the website’s local storage).
-Example:
-python
-Copy code
-.......
-def login_user(request):
-    if request.user.is_authenticated:
-        return redirect('main:show_main')
-    
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            response = HttpResponseRedirect(reverse('main:show_main'))
-            response.set_cookie('last_login', datetime.datetime.now())
-            return response
-
-    else:
-        form = AuthenticationForm(request)
-
-    context = {'form': form}
-    return render(request, 'auth/login.html', context)
-
-# Authentication Views
-def register(request):
-    form = UserCreationForm()
-
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "User has been created")
-            return redirect('main:login')
-
-    context = {'form': form}
-    return render(request, 'auth/register.html', context)
-.......
-Main Difference: redirect() is a simpler way to perform redirects and is flexible with parameters, while HttpResponseRedirect() provides more control for modifications before sending the response.
 
 ## 2. How the Product Model is Linked to the User Model
 In this project, the Product model is usually linked to the User model using ForeignKey. This connects each Product to a specific user.
