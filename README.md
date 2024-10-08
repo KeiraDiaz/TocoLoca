@@ -1,6 +1,207 @@
 # TocoLoca 🛍️🌴
 ### Your favorite local shop for simple goodies!!
 
+
+<details>
+<summary> Assignment 6 </summary>
+
+##1. Benefits of Using JavaScript in Web Application Development
+
+JavaScript is a very important programming language in web application development for several reasons:
+
+- **Dynamic Interactivity:** JavaScript allows the creation of more interactive web pages, such as animations, responsive buttons, and manipulation of HTML elements without needing to reload the entire page.
+- **Asynchronous Programming:** JavaScript supports asynchronous programming through techniques like AJAX and `fetch()`, which allow data to be retrieved from the server dynamically without affecting the user experience.
+- **Frontend Validation:** JavaScript enables client-side input validation before it is sent to the server, reducing the number of errors that reach the backend.
+- **Cross-Platform Compatibility:** JavaScript can be used across different platforms and browsers, making it a flexible and widely-used solution on various devices.
+
+##2. The Function of `await` in `fetch()` and the Consequences of Not Using It
+
+The `await` function in `fetch()` serves to wait for the completion of the fetch (asynchronous operation) before continuing the execution of the next line of code. This allows us to obtain the response data before using it further.
+
+If we do not use `await`, the program will continue execution without waiting for the result of `fetch()`, which can lead to:
+
+- **Promise Pending:** The result of `fetch()` will be a Promise that is still pending, so we cannot immediately use the fetched data.
+- **Data Access Issues:** The variable that is supposed to hold the fetched data may be empty or not contain the data yet, leading to errors or unintended behavior in the application.
+
+## 3. Why Use the `@csrf_exempt` Decorator on a View for AJAX POST Requests
+
+CSRF (Cross-Site Request Forgery) is a security mechanism in Django that ensures POST requests come from a legitimate source. However, when using AJAX POST, these requests often do not automatically carry the CSRF token, which can trigger CSRF validation failures.
+
+The `@csrf_exempt` decorator is used to disable CSRF checks on a specific view. This is useful in the following situations:
+
+- **Requests from a trusted source:** For example, if the AJAX request comes from a part of the application that can only be accessed by verified users.
+- **Preventing request failure:** Without this decorator, AJAX POST requests without a CSRF token will be rejected by Django.
+
+However, it is important to use this decorator carefully as it disables an important security mechanism. Make sure to maintain security by ensuring that only safe requests can reach this view.
+
+## 4. Reasons Why Input Data Cleansing is Done in the Backend, Not Just in the Frontend
+
+Input data cleansing in the backend is still necessary even though validation has been performed in the frontend for several important reasons:
+
+- **Security:** Frontend validation and data cleansing can be bypassed by users who manipulate requests using tools like Postman or by disabling JavaScript. The backend is a safer place to verify input data.
+- **Data Integrity:** The backend is responsible for ensuring that all data entering the system complies with the predefined rules. If we rely solely on frontend validation, invalid data could still enter the database.
+- **Handling Attacks:** Attacks such as injections (e.g., SQL injection or XSS) can occur if data is not properly sanitized in the backend. Input validation and cleansing in the backend are crucial to preventing such exploits.
+
+## 5. How to Implement Checklist
+
+1. Create our ajax function `views.py`
+```
+@csrf_exempt
+@require_POST
+def add_item_entry_ajax(request):
+        name = request.POST.get("name")
+        price = request.POST.get("price")
+        desc = request.POST.get("desc")
+        user = request.user
+
+    
+        if name and price and desc:
+            new_item = ItemEntry(
+                name=name, 
+                price=price,
+                desc=desc,
+                user=user
+            )
+            new_item.save()
+
+            return HttpResponse(status=201)
+        else:
+            return HttpResponse('Missing fields', status=400)
+```
+3. Implement urls and routing in `urls.py` in `main` directory
+```
+from main.views import show_main, create_item_entry, show_xml, show_json, show_xml_by_id, show_json_by_id, register, login_user, logout_user, edit_item, delete_item, add_item_entry_ajax
+
+...
+
+urlpatterns = [
+    ...
+    path('add-item-entry-ajax/', add_item_entry_ajax, name='add_item_entry_ajax'),
+]
+```
+5. Create JS Script to retrieve data using AJAX GET,add to database using AJAX POST, and post it to the website when done
+```
+function addItemEntry() {
+    const form = document.querySelector('#ItemEntryForm'); // Define the form variable
+    const formItems = new FormData(form);
+
+    fetch("{% url 'main:add_item_entry_ajax' %}", {
+      method: "POST",
+      body: formItems,
+    })
+    .then(response => {
+      if (response.ok) {
+        refreshItemEntries();
+        form.reset();
+      } else {
+        alert('Failed to add item.');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred.');
+    });
+
+    return false;
+  }
+
+  async function getItemEntries() {
+    return fetch("{% url 'main:show_json' %}").then((res) => res.json());
+  }
+
+  async function refreshItemEntries() {
+    document.getElementById("item_entry_cards").innerHTML = "";
+    document.getElementById("item_entry_cards").className = "";
+    const itemEntries = await getItemEntries();
+    let htmlString = "";
+    let classNameString = "";
+
+    if (itemEntries.length === 0) {
+      classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6";
+      htmlString = `
+        <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+          <img src="{% static 'image/very-sad.png' %}" alt="Sad face" class="w-32 h-32 mb-4"/>
+          <p class="text-center text-gray-600 mt-4">No items in your shop yet :(</p>
+        </div>
+      `;
+    } else {
+      classNameString = "columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full";
+      itemEntries.forEach((item) => {
+        htmlString += `
+          <div class="relative break-inside-avoid">
+            <div class="relative top-5 bg-indigo-100 shadow-md rounded-lg mb-6 break-inside-avoid flex flex-col border-2 border-indigo-300 transform rotate-1 hover:rotate-0 transition-transform duration-300">
+              <div class="bg-indigo-200 text-gray-800 p-4 rounded-t-lg border-b-2 border-indigo-300">
+                <h3 class="font-bold text-xl mb-2">${item.fields.name}</h3>
+              </div>
+              <div class="p-4">
+                <p class="font-semibold text-lg mb-2">Price</p>
+                <p class="text-gray-700 mb-2">
+                  <span class="bg-[linear-gradient(to_bottom,transparent_0%,transparent_calc(100%_-_1px),#CDC1FF_calc(100%_-_1px))] bg-[length:100%_1.5rem] pb-1">${item.fields.price}</span>
+                </p>
+                <div class="mt-4">
+                  <p class="text-gray-700 font-semibold mb-2">Description</p>
+                  <p class="text-gray-700 mb-2">
+                    <span class="bg-[linear-gradient(to_bottom,transparent_0%,transparent_calc(100%_-_1px),#CDC1FF_calc(100%_-_1px))] bg-[length:100%_1.5rem] pb-1">${item.fields.desc}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="absolute top-0 -right-4 flex space-x-1">
+              <a href="/edit-item/${item.pk}" class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+              </a>
+              <a href="/delete/${item.pk}" class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        `;
+      });
+    }
+    document.getElementById("item_entry_cards").className = classNameString;
+    document.getElementById("item_entry_cards").innerHTML = htmlString;
+  }
+
+  function showModal() {
+    const modal = document.getElementById('crudModal');
+    const modalContent = document.getElementById('crudModalContent');
+
+    modal.classList.remove('hidden'); 
+    setTimeout(() => {
+      modalContent.classList.remove('opacity-0', 'scale-95');
+      modalContent.classList.add('opacity-100', 'scale-100');
+    }, 50); 
+  }
+
+  function hideModal() {
+    const modal = document.getElementById('crudModal');
+    const modalContent = document.getElementById('crudModalContent');
+
+    modalContent.classList.remove('opacity-100', 'scale-100');
+    modalContent.classList.add('opacity-0', 'scale-95');
+
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 150); 
+  }
+
+  document.getElementById("cancelButton").addEventListener("click", hideModal);
+  document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+  refreshItemEntries();
+  document.getElementById("ItemEntryForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    addItemEntry();
+    hideModal();
+  });
+</script>
+```
+
+</details>
+
 <details>
 
 <summary> Assignment 5
