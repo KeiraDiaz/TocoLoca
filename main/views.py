@@ -116,12 +116,15 @@ def add_item_entry_ajax(request):
         user = request.user
 
     
-        new_item = ItemEntry(
-            name=name, 
-            price=price,
-            desc=desc,
-            user=user
-        )
-        new_item.save()
+        if name and price and desc:
+            new_item = ItemEntry(
+                name=name, 
+                price=price,
+                desc=desc,
+                user=user
+            )
+            new_item.save()
 
-        return HttpResponse(b"CREATED", status=201)
+            return HttpResponse(status=201)
+        else:
+            return HttpResponse('Missing fields', status=400)
