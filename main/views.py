@@ -1,7 +1,8 @@
+import json
 from django.shortcuts import render, redirect, reverse
 from main.forms import ItemEntryForm
 from main.models import ItemEntry
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core import serializers
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
@@ -41,11 +42,11 @@ def create_item_entry(request):
     return render(request, "create_item_entry.html", context)
 
 def show_xml(request):
-    data = ItemEntry.objects.filter(user=request.user)
+    data = ItemEntry.objects.filter()
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
 
 def show_json(request):
-    data = ItemEntry.objects.filter(user=request.user)
+    data = ItemEntry.objects.filter()
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_xml_by_id(request, id):
@@ -130,3 +131,20 @@ def add_item_entry_ajax(request):
         else:
             return HttpResponse('Missing fields', status=400)
 
+@csrf_exempt
+def create_mood_flutter(request):
+    if request.method == 'POST':
+
+        data = json.loads(request.body)
+        new_mood = ItemEntry.objects.create(
+            user=request.user,
+            name=data["name"],
+            price=int(data["price"]),
+            desc=data["desc"]
+        )
+
+        new_mood.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
